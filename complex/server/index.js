@@ -17,12 +17,27 @@ const pgClient = new Pool({
   database: keys.pgDatabase,
   password: keys.pgPassword,
   port: keys.pgPort,
+  connectionTimeoutMillis: 2000,
 });
-pgClient.on("connect", () => {
-  pgClient
-    .query("CREATE TABLE IF NOT EXISTS values (number INT)")
-    .catch((err) => console.log(err));
-});
+pgClient.query(
+  "CREATE TABLE IF NOT EXISTS values (number INT)",
+  (err, result) => {
+    if (err) {
+      console.error("error in creating values table", err);
+    }
+    console.log("values table created", result);
+  }
+);
+// pgClient.on("error", (err, client) => {
+//   console.error("ERROR at pg **************", err);
+//   process.exit(-1);
+// });
+// pgClient.on("connect", () => {
+//   console.log("connected to postgres");
+//   pgClient
+//     .query("CREATE TABLE IF NOT EXISTS values (number INT)")
+//     .catch((err) => console.log(err));
+// });
 
 // redis setup
 const redis = require("redis");
